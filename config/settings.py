@@ -9,7 +9,11 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+<<<<<<< HEAD
 import os
+=======
+
+>>>>>>> eb4204f1c6c1288a10d2cf4546b09401e09be9f8
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +24,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+<<<<<<< HEAD
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-t5@o&qs50b4bh3@2_66+u@*^-h5dwsa9su*1(^9h5%cm-s-&pg')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
+=======
+SECRET_KEY = 'django-insecure-t5@o&qs50b4bh3@2_66+u@*^-h5dwsa9su*1(^9h5%cm-s-&pg'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = []
+>>>>>>> eb4204f1c6c1288a10d2cf4546b09401e09be9f8
 
 
 # Application definition
@@ -118,9 +131,15 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+<<<<<<< HEAD
 
 
 STATIC_URL = '/static/'
+=======
+import os
+
+STATIC_URL = 'static/'
+>>>>>>> eb4204f1c6c1288a10d2cf4546b09401e09be9f8
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
