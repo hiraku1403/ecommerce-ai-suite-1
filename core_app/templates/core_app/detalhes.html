@@ -1,0 +1,69 @@
+{% extends 'core_app/base.html' %}
+
+{% block content %}
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-bold text-white">{{ relatorio.nome_arquivo }}</h1>
+        <p class="text-slate-400 text-sm">Processado em: {{ relatorio.criado_em|date:"d/m/Y H:i" }}</p>
+    </div>
+    <a href="{% url 'upload_planilha' %}" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 px-4 py-2 rounded-lg text-sm">← Novo Upload</a>
+</div>
+
+<!-- Cards de Métricas Gerais -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+        <span class="text-xs uppercase text-slate-400 font-bold">Total de Produtos</span>
+        <div class="text-3xl font-black text-white mt-2">{{ relatorio.total_produtos }}</div>
+    </div>
+    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+        <span class="text-xs uppercase text-slate-400 font-bold">Produtos com Baixa Conversão</span>
+        <div class="text-3xl font-black text-amber-400 mt-2">{{ relatorio.produtos_baixa_conversao }}</div>
+    </div>
+    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+        <span class="text-xs uppercase text-slate-400 font-bold">Taxa de Alta Conversão</span>
+        <div class="text-3xl font-black text-emerald-400 mt-2">{{ taxa_conversao_alta }}%</div>
+    </div>
+</div>
+
+<!-- Tabela de Produtos com IA -->
+<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+    <div class="p-6 border-b border-slate-700">
+        <h2 class="text-xl font-bold text-slate-200">Análise Detalhada dos Produtos</h2>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+                <tr>
+                    <th class="p-4">Produto</th>
+                    <th class="p-4">Preço</th>
+                    <th class="p-4">Probabilidade (ML)</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4">Diagnóstico do Agente de IA</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for p in produtos %}
+                <tr class="hover:bg-slate-750">
+                    <td class="p-4 font-bold text-white">{{ p.nome_produto }}</td>
+                    <td class="p-4">R$ {{ p.preco }}</td>
+                    <td class="p-4 font-mono font-bold">{{ p.probabilidade_conversao }}</td>
+                    <td class="p-4">
+                        {% if p.previsao_classe == "Alta Conversao" %}
+                            <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-full text-xs font-bold">Alta Conversão</span>
+                        {% else %}
+                            <span class="bg-amber-950 text-amber-400 border border-amber-800 px-2.5 py-1 rounded-full text-xs font-bold">Baixa Conversão</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4 max-w-md">
+                        <p class="text-xs text-slate-300"><strong>Causa:</strong> {{ p.diagnostico_causa }}</p>
+                        {% if p.plano_acao_cro %}
+                            <p class="text-xs text-emerald-400 mt-1"><strong>Ação Recomendada:</strong> {{ p.plano_acao_cro }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

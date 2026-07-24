@@ -1,0 +1,36 @@
+{% extends 'core_app/base.html' %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-white mb-6">Histórico de Relatórios no Banco de Dados</h1>
+
+<div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+    <table class="w-full text-left text-sm text-slate-300">
+        <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+            <tr>
+                <th class="p-4">ID</th>
+                <th class="p-4">Nome do Arquivo</th>
+                <th class="p-4">Data de Envio</th>
+                <th class="p-4">Total de Produtos</th>
+                <th class="p-4">Ação</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-700">
+            {% for r in relatorios %}
+            <tr class="hover:bg-slate-750">
+                <td class="p-4 font-bold">#{{ r.id }}</td>
+                <td class="p-4 text-white font-medium">{{ r.nome_arquivo }}</td>
+                <td class="p-4">{{ r.criado_em|date:"d/m/Y H:i" }}</td>
+                <td class="p-4">{{ r.total_produtos }}</td>
+                <td class="p-4">
+                    <a href="{% url 'detalhes_relatorio' r.id %}" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded text-xs font-bold">Abrir Dashboard</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="p-6 text-center text-slate-500">Nenhum relatório enviado até o momento.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
