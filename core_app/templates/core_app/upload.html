@@ -1,0 +1,18 @@
+{% extends 'core_app/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700">
+    <h1 class="text-2xl font-bold mb-2 text-emerald-400">Upload de Planilha de Produtos</h1>
+    <p class="text-slate-400 mb-6 text-sm">Envie um arquivo <strong>.xlsx</strong> para que o motor de ML e os Agentes de IA façam o diagnóstico em lote.</p>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <div class="bg-slate-900 p-6 rounded-xl border border-dashed border-slate-700 text-center">
+            {{ form.arquivo }}
+        </div>
+        <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
+            Processar com ML e Agentes de IA 🚀
+        </button>
+    </form>
+</div>
+{% endblock %}
