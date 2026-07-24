@@ -16,20 +16,19 @@ def upload_e_processar(request):
             arquivo_excel = request.FILES['arquivo']
             
             try:
-                # 1. Leitura da planilha com Pandas
+                # 1. Leitura direta do arquivo em memória (io.BytesIO) para contornar o Read-Only da Vercel
                 df = pd.read_excel(arquivo_excel)
                 
-                # Validação simples das colunas obrigatórias
+                # Validação das colunas
                 colunas_esperadas = ['nome_produto', 'preco', 'avaliacao_media', 'num_avaliacoes', 'investimento_ads']
                 for col in colunas_esperadas:
                     if col not in df.columns:
                         messages.error(request, f"Coluna obrigatória ausente na planilha: '{col}'")
                         return render(request, 'core_app/upload.html', {'form': form})
 
-                # 2. Criando o registro pai do Relatório no Banco de Dados
+                # 2. Criando o registro no banco sem salvar o arquivo físico no disco
                 relatorio = RelatorioBatch.objects.create(
                     nome_arquivo=arquivo_excel.name,
-                    arquivo_original=arquivo_excel,
                     total_produtos=len(df)
                 )
 
@@ -37,7 +36,6 @@ def upload_e_processar(request):
 
                 # 3. Processamento Linha por Linha
                 for _, linha in df.iterrows():
-                    # Executa a previsão do Machine Learning (Scikit-Learn)
                     prob, classe = ml_engine.prever(
                         preco=float(linha['preco']),
                         avaliacao_media=float(linha['avaliacao_media']),
@@ -48,7 +46,6 @@ def upload_e_processar(request):
                     diagnostico_texto = "Produto com alto potencial de ROI."
                     plano_acao_texto = "Manter estratégia atual e escalar anúncios."
 
-                    # Se o ML prever Baixa Conversão, acionamos o Agente de IA para Diagnóstico
                     if classe == "Baixa Conversao":
                         baixa_conversao_count += 1
                         analise = cro_agent.analisar_performance(
@@ -63,7 +60,7 @@ def upload_e_processar(request):
                         diagnostico_texto = analise.diagnostico_causa
                         plano_acao_texto = " | ".join(analise.plano_acao_cro)
 
-                    # 4. Salva cada produto associado ao relatório no Banco de Dados
+                    # 4. Salva no banco de dados
                     ProdutoAnalisado.objects.create(
                         relatorio=relatorio,
                         nome_produto=str(linha['nome_produto']),
@@ -77,7 +74,6 @@ def upload_e_processar(request):
                         plano_acao_cro=plano_acao_texto
                     )
 
-                # Atualiza métricas finais do relatório
                 relatorio.produtos_baixa_conversao = baixa_conversao_count
                 relatorio.save()
 

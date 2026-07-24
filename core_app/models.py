@@ -5,7 +5,7 @@ from django.db import models
 
 class RelatorioBatch(models.Model):
     nome_arquivo = models.CharField(max_length=255)
-    arquivo_original = models.FileField(upload_to='planilhas/')
+    arquivo_original = models.FileField(upload_to='planilhas/', null=True, blank=True) 
     criado_em = models.DateTimeField(auto_now_add=True)
     total_produtos = models.IntegerField(default=0)
     produtos_baixa_conversao = models.IntegerField(default=0)
